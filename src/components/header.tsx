@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
-import { Feather, LogOut, User, Languages } from 'lucide-react';
+import { Feather, LogOut, User } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
 import { auth } from '@/lib/firebase';
 import {
@@ -15,14 +15,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-
 
 export function Header() {
   const { user, loading } = useAuth();
@@ -46,16 +38,6 @@ export function Header() {
             <Logo />
           </div>
           <div className="flex items-center gap-4">
-            <Select defaultValue="en">
-              <SelectTrigger className="w-auto h-9 border-0 bg-transparent">
-                 <Languages className="h-4 w-4 text-muted-foreground" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="en">English</SelectItem>
-                <SelectItem value="ru">Русский</SelectItem>
-              </SelectContent>
-            </Select>
-
             <nav className="flex items-center gap-2">
               {loading ? (
                 <div className="h-9 w-20 animate-pulse rounded-md bg-muted"></div>
