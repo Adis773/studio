@@ -1,5 +1,6 @@
 
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
+import { cookies } from 'next/headers'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function GET(request: NextRequest) {
@@ -9,27 +10,32 @@ export async function GET(request: NextRequest) {
   const next = searchParams.get('next') ?? '/'
 
   if (code) {
+    const cookieStore = cookies()
     const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+       'https://pxbogsidwrkdcdboohdr.supabase.co',
+       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4Ym9nc2lkd3JrZGNkYm9vaGRyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg5NjA0MTEsImV4cCI6MjA3NDUzNjQxMX0.5nTn00gVw3ximo2qQL37xOHaOGj3lvuuAJB7BMS9EjU',
       {
         cookies: {
           get(name: string) {
-            return request.cookies.get(name)?.value
+            return cookieStore.get(name)?.value
           },
           set(name: string, value: string, options: CookieOptions) {
-            request.cookies.set({
-              name,
-              value,
-              ...options,
-            })
+            try {
+              cookieStore.set({ name, value, ...options })
+            } catch (error) {
+              // The `set` method was called from a Server Component.
+              // This can be ignored if you have middleware refreshing
+              // user sessions.
+            }
           },
           remove(name: string, options: CookieOptions) {
-            request.cookies.set({
-              name,
-              value: '',
-              ...options,
-            })
+            try {
+              cookieStore.set({ name, value: '', ...options })
+            } catch (error) {
+              // The `delete` method was called from a Server Component.
+              // This can be ignored if you have middleware refreshing
+              // user sessions.
+            }
           },
         },
       }
