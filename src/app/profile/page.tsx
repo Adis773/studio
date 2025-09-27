@@ -3,15 +3,12 @@
 
 import { useAuth } from '@/context/auth-context';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { getStories } from '@/lib/data';
+import { useEffect, useState, useCallback } from 'react';
 import { StoryCard } from '@/components/story-card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
-import { db } from '@/lib/firebase';
-import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
+import { supabase } from '@/lib/supabase';
 import type { Story } from '@/lib/types';
-
 
 export default function ProfilePage() {
   const { user, loading: authLoading } = useAuth();
@@ -25,32 +22,40 @@ export default function ProfilePage() {
     }
   }, [user, authLoading, router]);
 
+  const fetchStories = useCallback(async (userId: string) => {
+    setStoriesLoading(true);
+    const { data, error } = await supabase
+      .from('stories')
+      .select('*')
+      .eq('authorId', userId)
+      .order('createdAt', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching stories from Supabase:', error);
+      setStories([]);
+    } else {
+      // Map Supabase data to our Story type
+      const userStories = data.map((story: any) => ({
+        id: story.id,
+        authorId: story.authorId,
+        title: story.title,
+        content: story.content,
+        category: story.category,
+        createdAt: story.created_at, // Note the snake_case from Supabase
+        views: story.views || 0,
+        reactions: story.reactions || { like: 0, love: 0, haha: 0, wow: 0, sad: 0, angry: 0 },
+        comments: story.comments || [],
+      }));
+      setStories(userStories);
+    }
+    setStoriesLoading(false);
+  }, []);
+
   useEffect(() => {
     if (user) {
-      const fetchStories = async () => {
-        setStoriesLoading(true);
-        const q = query(
-          collection(db, 'stories'), 
-          where('authorId', '==', user.uid),
-          orderBy('createdAt', 'desc')
-        );
-        const querySnapshot = await getDocs(q);
-        const userStories = querySnapshot.docs.map(doc => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            ...data,
-            // Convert Firestore Timestamp to ISO string if needed
-            createdAt: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : new Date().toISOString(),
-          } as Story;
-        });
-        setStories(userStories);
-        setStoriesLoading(false);
-      };
-      fetchStories();
+      fetchStories(user.uid);
     }
-  }, [user]);
-
+  }, [user, fetchStories]);
 
   if (authLoading || !user) {
     return (

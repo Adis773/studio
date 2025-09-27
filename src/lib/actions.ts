@@ -2,17 +2,13 @@
 
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
-import { db } from './firebase'; // Firestore instance
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { supabase } from './supabase';
 import { auth } from './firebase'; // Firebase Auth instance
-import type { Story } from './types';
-
 
 export async function submitStory(formData: FormData) {
   const user = auth.currentUser;
 
   if (!user) {
-    // This should not happen if the form is protected, but as a safeguard.
     redirect('/login');
   }
 
@@ -23,27 +19,24 @@ export async function submitStory(formData: FormData) {
   };
 
   if (!rawData.content || !rawData.category) {
-    // Handle error: content and category are required
-    return;
+    return { error: 'Content and category are required' };
   }
   
-  try {
-    const newStory: Omit<Story, 'id' | 'createdAt'> & { authorId: string; createdAt: any } = {
-        authorId: user.uid,
-        title: rawData.title,
-        content: rawData.content,
-        category: rawData.category as any,
-        views: 0,
-        reactions: { like: 0, love: 0, haha: 0, wow: 0, sad: 0, angry: 0 },
-        comments: [],
-        createdAt: serverTimestamp()
-    };
-    await addDoc(collection(db, "stories"), newStory);
-  } catch(e) {
-    console.error("Error adding document: ", e);
-    // Handle error properly in a real app
-  }
+  const newStory = {
+      authorId: user.uid,
+      title: rawData.title,
+      content: rawData.content,
+      category: rawData.category,
+      // Default values for views, reactions, and comments should be set in Supabase table
+  };
 
+  const { error } = await supabase.from('stories').insert([newStory]);
+
+  if (error) {
+    console.error("Error inserting story into Supabase:", error);
+    // Handle error properly in a real app
+    return { error: 'Could not save the story. Please try again.' };
+  }
 
   revalidatePath('/');
   revalidatePath('/profile');
@@ -58,7 +51,39 @@ export async function submitComment(storyId: string, formData: FormData) {
   }
 
   // In a real app, you would save this to the database.
+  // For Supabase, you'd likely fetch the story, update its comments array,
+  // and then update the row.
   console.log(`New comment for story ${storyId}:`, commentText);
+  
+  // Example of how you might do it with Supabase (needs a 'comments' JSONB column)
+  /*
+  const { data: story, error: fetchError } = await supabase
+    .from('stories')
+    .select('comments')
+    .eq('id', storyId)
+    .single();
+
+  if (fetchError || !story) {
+    return { error: 'Failed to fetch story for commenting.' };
+  }
+
+  const newComment = {
+    id: new Date().toISOString(), // Or use a UUID
+    text: commentText,
+    createdAt: new Date().toISOString(),
+  };
+
+  const updatedComments = [...story.comments, newComment];
+
+  const { error: updateError } = await supabase
+    .from('stories')
+    .update({ comments: updatedComments })
+    .eq('id', storyId);
+
+  if (updateError) {
+    return { error: 'Failed to post comment.' };
+  }
+  */
 
   revalidatePath(`/story/${storyId}`);
 }
