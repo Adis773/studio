@@ -3,23 +3,56 @@
 
 import { useAuth } from '@/context/auth-context';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { getStories } from '@/lib/data';
 import { StoryCard } from '@/components/story-card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
+import { db } from '@/lib/firebase';
+import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
+import type { Story } from '@/lib/types';
+
 
 export default function ProfilePage() {
-  const { user, loading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const router = useRouter();
+  const [stories, setStories] = useState<Story[]>([]);
+  const [storiesLoading, setStoriesLoading] = useState(true);
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (!authLoading && !user) {
       router.push('/login');
     }
-  }, [user, loading, router]);
+  }, [user, authLoading, router]);
 
-  if (loading || !user) {
+  useEffect(() => {
+    if (user) {
+      const fetchStories = async () => {
+        setStoriesLoading(true);
+        const q = query(
+          collection(db, 'stories'), 
+          where('authorId', '==', user.uid),
+          orderBy('createdAt', 'desc')
+        );
+        const querySnapshot = await getDocs(q);
+        const userStories = querySnapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            ...data,
+            // Convert Firestore Timestamp to ISO string if needed
+            createdAt: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : new Date().toISOString(),
+          } as Story;
+        });
+        setStories(userStories);
+        setStoriesLoading(false);
+      };
+      fetchStories();
+    }
+  }, [user]);
+
+
+  if (authLoading || !user) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col items-center sm:flex-row gap-6 mb-12">
@@ -49,11 +82,6 @@ export default function ProfilePage() {
     );
   }
 
-  // NOTE: In a real application, you would fetch stories created by the current user.
-  // Since we are using mock data and stories are anonymous, we will display all stories
-  // as a placeholder for "My Whispers".
-  const myStories = getStories();
-
   const getInitials = (email: string | null | undefined) => {
     if (!email) return '?';
     const name = user.displayName;
@@ -79,16 +107,30 @@ export default function ProfilePage() {
         <h2 className="text-2xl font-bold tracking-tight text-foreground mb-6">
           My Whispers
         </h2>
-        {myStories.length > 0 ? (
+        {storiesLoading ? (
+           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(3)].map((_, i) => (
+               <div key={i} className="p-4 rounded-lg border bg-card space-y-3">
+                  <Skeleton className="h-5 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-2/3" />
+                  </div>
+               </div>
+            ))}
+          </div>
+        ) : stories.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {myStories.map((story) => (
+            {stories.map((story) => (
               <StoryCard key={story.id} story={story} />
             ))}
           </div>
         ) : (
           <div className="text-center py-16 text-muted-foreground bg-card rounded-lg">
-            <p className="text-lg">You haven&apos;t shared any whispers yet.</p>
-            <p>Why not be the first to share one?</p>
+            <p className="text-lg">You haven't shared any whispers yet.</p>
+            <p>Go on, share a story!</p>
           </div>
         )}
       </section>

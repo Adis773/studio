@@ -17,6 +17,7 @@ export type Comment = {
 
 export type Story = {
   id: string;
+  authorId: string;
   title?: string;
   content: string;
   category: CategoryID;

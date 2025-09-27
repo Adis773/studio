@@ -2,26 +2,52 @@
 
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
+import { db } from './firebase'; // Firestore instance
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { auth } from './firebase'; // Firebase Auth instance
+import type { Story } from './types';
+
 
 export async function submitStory(formData: FormData) {
+  const user = auth.currentUser;
+
+  if (!user) {
+    // This should not happen if the form is protected, but as a safeguard.
+    redirect('/login');
+  }
+
   const rawData = {
-    title: formData.get('title'),
-    content: formData.get('content'),
-    category: formData.get('category'),
+    title: formData.get('title') as string || '',
+    content: formData.get('content') as string,
+    category: formData.get('category') as string,
   };
 
-  // In a real app, you would save this data to a database.
-  // For this demo, we'll just log it to the server console.
-  console.log('New story submitted:', rawData);
+  if (!rawData.content || !rawData.category) {
+    // Handle error: content and category are required
+    return;
+  }
+  
+  try {
+    const newStory: Omit<Story, 'id' | 'createdAt'> & { authorId: string; createdAt: any } = {
+        authorId: user.uid,
+        title: rawData.title,
+        content: rawData.content,
+        category: rawData.category as any,
+        views: 0,
+        reactions: { like: 0, love: 0, haha: 0, wow: 0, sad: 0, angry: 0 },
+        comments: [],
+        createdAt: serverTimestamp()
+    };
+    await addDoc(collection(db, "stories"), newStory);
+  } catch(e) {
+    console.error("Error adding document: ", e);
+    // Handle error properly in a real app
+  }
 
-  // In a real app, you might add the new story to your data source.
-  // For now, since we're using static mock data, we can't add to it.
-  // We'll revalidate the path to ensure that if the data source was dynamic,
-  // the page would be updated.
+
   revalidatePath('/');
-
-  // Redirect to the home page after submission.
-  redirect('/');
+  revalidatePath('/profile');
+  redirect('/profile');
 }
 
 export async function submitComment(storyId: string, formData: FormData) {
