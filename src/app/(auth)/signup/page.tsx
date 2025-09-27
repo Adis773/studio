@@ -26,6 +26,9 @@ export default function SignUpPage() {
     const { error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo: `${location.origin}/auth/callback`,
+      },
     });
 
     if (error) {
@@ -36,7 +39,8 @@ export default function SignUpPage() {
       });
     } else {
       toast({ title: 'Success', description: 'Account created! Please check your email to confirm.' });
-      router.push('/login');
+      // Don't redirect immediately, user needs to confirm email.
+      // router.push('/login');
     } 
     setIsLoading(false);
   };
