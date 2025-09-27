@@ -7,7 +7,7 @@ import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
 import { Feather, LogOut, User } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase/client';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,6 +21,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 export function Header() {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const supabase = createClient();
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();

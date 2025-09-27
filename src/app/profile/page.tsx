@@ -7,7 +7,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { StoryCard } from '@/components/story-card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase/client';
 import type { Story } from '@/lib/types';
 
 export default function ProfilePage() {
@@ -15,6 +15,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const [stories, setStories] = useState<Story[]>([]);
   const [storiesLoading, setStoriesLoading] = useState(true);
+  const supabase = createClient();
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -48,7 +49,7 @@ export default function ProfilePage() {
       setStories(userStories);
     }
     setStoriesLoading(false);
-  }, []);
+  }, [supabase]);
 
   useEffect(() => {
     if (user) {
