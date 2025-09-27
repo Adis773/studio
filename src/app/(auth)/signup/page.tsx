@@ -26,7 +26,7 @@ export default function SignUpPage() {
     setIsLoading(true);
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-      toast({ title: 'Success', description: 'Account created successfully.' });
+      toast({ title: 'Success', description: 'Account created successfully. You are now logged in.' });
       router.push('/');
     } catch (error: any) {
       toast({
