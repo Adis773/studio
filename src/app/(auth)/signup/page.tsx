@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -15,6 +15,7 @@ import { Chrome } from 'lucide-react';
 export default function SignUpPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const supabase = createClient();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -39,8 +40,6 @@ export default function SignUpPage() {
       });
     } else {
       toast({ title: 'Success', description: 'Account created! Please check your email to confirm.' });
-      // Don't redirect immediately, user needs to confirm email.
-      // router.push('/login');
     } 
     setIsLoading(false);
   };
@@ -51,6 +50,10 @@ export default function SignUpPage() {
       provider: 'google',
        options: {
         redirectTo: `${location.origin}/auth/callback`,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
       }
     });
 

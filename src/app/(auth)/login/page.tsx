@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { createClient } from '@/lib/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -15,6 +15,7 @@ import { Chrome } from 'lucide-react';
 export default function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const supabase = createClient();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -37,7 +38,7 @@ export default function LoginPage() {
     } else {
       toast({ title: 'Success', description: "You're logged in." });
       router.push('/');
-      router.refresh(); // Force a refresh to update auth state
+      router.refresh();
     }
     setIsLoading(false);
   };
@@ -48,6 +49,10 @@ export default function LoginPage() {
       provider: 'google',
       options: {
         redirectTo: `${location.origin}/auth/callback`,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
       }
     });
     if (error) {
