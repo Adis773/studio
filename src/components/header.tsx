@@ -2,11 +2,12 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
 import { Feather, LogOut, User } from 'lucide-react';
 import { useAuth } from '@/context/auth-context';
-import { auth } from '@/lib/firebase';
+import { supabase } from '@/lib/supabase';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,13 +20,18 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export function Header() {
   const { user, loading } = useAuth();
+  const router = useRouter();
 
   const handleSignOut = async () => {
-    await auth.signOut();
+    await supabase.auth.signOut();
+    router.push('/login');
+    router.refresh();
   };
 
   const getInitials = (email: string | null | undefined) => {
-    return email ? email.charAt(0).toUpperCase() : '?';
+    if (!email) return '?';
+    const name = user?.user_metadata?.name;
+    return name ? name.charAt(0).toUpperCase() : email.charAt(0).toUpperCase();
   };
 
   return (
@@ -54,7 +60,7 @@ export function Header() {
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                         <Avatar className="h-8 w-8">
-                          <AvatarImage src={user.photoURL || ''} alt={user.email || ''} />
+                          <AvatarImage src={user.user_metadata?.avatar_url || ''} alt={user.email || ''} />
                           <AvatarFallback>{getInitials(user.email)}</AvatarFallback>
                         </Avatar>
                       </Button>
@@ -63,7 +69,7 @@ export function Header() {
                       <DropdownMenuLabel className="font-normal">
                         <div className="flex flex-col space-y-1">
                           <p className="text-sm font-medium leading-none">
-                            {user.displayName || 'Anonymous'}
+                            {user.user_metadata?.name || 'Anonymous'}
                           </p>
                           <p className="text-xs leading-none text-muted-foreground">
                             {user.email}

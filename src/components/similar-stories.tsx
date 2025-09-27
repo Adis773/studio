@@ -1,4 +1,4 @@
-import { suggestSimilarStories } from '@/ai/flows/suggest-similar-stories';
+
 import { getStoryById } from '@/lib/data';
 import { StoryCard } from './story-card';
 import { Lightbulb } from 'lucide-react';
@@ -9,40 +9,8 @@ interface SimilarStoriesProps {
 }
 
 export async function SimilarStories({ storyId, storyContent }: SimilarStoriesProps) {
-  let similarStoryIds: string[] = [];
-  try {
-    similarStoryIds = await suggestSimilarStories({ storyId, storyContent });
-  } catch (error) {
-    console.error("Failed to fetch similar stories:", error);
-    // Gracefully fail by showing nothing
-    return null;
-  }
-  
-  if (!similarStoryIds || similarStoryIds.length === 0) {
-    return null;
-  }
-
-  const similarStories = similarStoryIds
-    .map(id => getStoryById(id))
-    .filter((story): story is NonNullable<typeof story> => story !== undefined);
-
-  if (similarStories.length === 0) {
-    return null;
-  }
-
-  return (
-    <div className="rounded-lg border bg-card p-4 sm:p-6">
-      <div className="flex items-center gap-3 mb-4">
-        <Lightbulb className="w-6 h-6 text-primary" />
-        <h3 className="text-xl font-bold">Similar Whispers</h3>
-      </div>
-      <div className="space-y-4">
-        {similarStories.map(story => (
-          <LinkStoryCard key={story.id} story={story} />
-        ))}
-      </div>
-    </div>
-  );
+  // AI functionality is temporarily removed.
+  return null;
 }
 
 

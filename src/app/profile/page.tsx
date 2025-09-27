@@ -34,14 +34,13 @@ export default function ProfilePage() {
       console.error('Error fetching stories from Supabase:', error);
       setStories([]);
     } else {
-      // Map Supabase data to our Story type
       const userStories = data.map((story: any) => ({
         id: story.id,
         authorId: story.authorId,
         title: story.title,
         content: story.content,
         category: story.category,
-        createdAt: story.created_at, // Note the snake_case from Supabase
+        createdAt: story.created_at, 
         views: story.views || 0,
         reactions: story.reactions || { like: 0, love: 0, haha: 0, wow: 0, sad: 0, angry: 0 },
         comments: story.comments || [],
@@ -53,7 +52,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (user) {
-      fetchStories(user.uid);
+      fetchStories(user.id);
     }
   }, [user, fetchStories]);
 
@@ -89,7 +88,7 @@ export default function ProfilePage() {
 
   const getInitials = (email: string | null | undefined) => {
     if (!email) return '?';
-    const name = user.displayName;
+    const name = user.user_metadata?.name;
     return name ? name.charAt(0).toUpperCase() : email.charAt(0).toUpperCase();
   };
 
@@ -97,13 +96,13 @@ export default function ProfilePage() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col items-center sm:flex-row gap-6 mb-12">
         <Avatar className="h-24 w-24">
-          <AvatarImage src={user.photoURL || ''} alt={user.displayName || user.email || ''} />
+          <AvatarImage src={user.user_metadata?.avatar_url || ''} alt={user.user_metadata?.name || user.email || ''} />
           <AvatarFallback className="text-3xl">
             {getInitials(user.email)}
           </AvatarFallback>
         </Avatar>
         <div className="text-center sm:text-left">
-          <h1 className="text-3xl font-bold">{user.displayName || 'Anonymous'}</h1>
+          <h1 className="text-3xl font-bold">{user.user_metadata?.name || 'Anonymous'}</h1>
           <p className="text-muted-foreground">{user.email}</p>
         </div>
       </div>

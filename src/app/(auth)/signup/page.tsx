@@ -3,8 +3,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -24,35 +23,39 @@ export default function SignUpPage() {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      toast({ title: 'Success', description: 'Account created successfully. You are now logged in.' });
-      router.push('/');
-    } catch (error: any) {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+
+    if (error) {
       toast({
         title: 'Error creating account',
         description: error.message,
         variant: 'destructive',
       });
-    } finally {
-      setIsLoading(false);
-    }
+    } else {
+      toast({ title: 'Success', description: 'Account created! Please check your email to confirm.' });
+      router.push('/login');
+    } 
+    setIsLoading(false);
   };
 
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
-    const provider = new GoogleAuthProvider();
-    try {
-      await signInWithPopup(auth, provider);
-      toast({ title: 'Success', description: "You're signed in with Google." });
-      router.push('/');
-    } catch (error: any) {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+       options: {
+        redirectTo: `${location.origin}/auth/callback`,
+      }
+    });
+
+    if (error) {
       toast({
         title: 'Google Sign-In Error',
         description: error.message,
         variant: 'destructive',
       });
-    } finally {
       setIsGoogleLoading(false);
     }
   };

@@ -1,12 +1,12 @@
+
 'use server';
 
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { supabase } from './supabase';
-import { auth } from './firebase'; // Firebase Auth instance
 
 export async function submitStory(formData: FormData) {
-  const user = auth.currentUser;
+  const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
     redirect('/login');
@@ -23,7 +23,7 @@ export async function submitStory(formData: FormData) {
   }
   
   const newStory = {
-      authorId: user.uid,
+      authorId: user.id,
       title: rawData.title,
       content: rawData.content,
       category: rawData.category,
@@ -34,7 +34,6 @@ export async function submitStory(formData: FormData) {
 
   if (error) {
     console.error("Error inserting story into Supabase:", error);
-    // Handle error properly in a real app
     return { error: 'Could not save the story. Please try again.' };
   }
 
@@ -50,13 +49,8 @@ export async function submitComment(storyId: string, formData: FormData) {
     return { error: 'Comment cannot be empty.' };
   }
 
-  // In a real app, you would save this to the database.
-  // For Supabase, you'd likely fetch the story, update its comments array,
-  // and then update the row.
-  console.log(`New comment for story ${storyId}:`, commentText);
-  
-  // Example of how you might do it with Supabase (needs a 'comments' JSONB column)
-  /*
+  const { data: { user } } = await supabase.auth.getUser();
+
   const { data: story, error: fetchError } = await supabase
     .from('stories')
     .select('comments')
@@ -69,11 +63,12 @@ export async function submitComment(storyId: string, formData: FormData) {
 
   const newComment = {
     id: new Date().toISOString(), // Or use a UUID
+    userId: user?.id,
     text: commentText,
     createdAt: new Date().toISOString(),
   };
 
-  const updatedComments = [...story.comments, newComment];
+  const updatedComments = [...(story.comments || []), newComment];
 
   const { error: updateError } = await supabase
     .from('stories')
@@ -83,7 +78,6 @@ export async function submitComment(storyId: string, formData: FormData) {
   if (updateError) {
     return { error: 'Failed to post comment.' };
   }
-  */
 
   revalidatePath(`/story/${storyId}`);
 }
