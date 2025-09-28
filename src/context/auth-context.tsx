@@ -21,25 +21,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const supabase = createClient();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
   useEffect(() => {
-    const getSession = async () => {
-        const { data: { session } } = await supabase.auth.getSession();
-        setUser(session?.user ?? null);
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+
+    // Initial load
+    const checkUser = async () => {
+        const {data: { user }} = await supabase.auth.getUser();
+        setUser(user);
         setLoading(false);
     }
-    getSession();
+    checkUser();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
-        setLoading(false);
-      }
-    );
 
     return () => {
-      subscription?.unsubscribe();
+      subscription.unsubscribe();
     };
   }, [supabase]);
 
