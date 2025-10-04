@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import {
   Carousel,
@@ -18,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ChevronDown, TrendingUp } from 'lucide-react';
+import Image from 'next/image';
 
 export default function HomePage({
   searchParams,
@@ -39,6 +41,27 @@ export default function HomePage({
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Premium Section */}
+      <section className="mb-12 text-center">
+        <h2 className="text-3xl font-bold tracking-tight text-foreground mb-4">
+          Премиум доступ
+        </h2>
+        <p className="text-muted-foreground mb-6">
+          Поддержите проект и получите доступ к эксклюзивным возможностям!
+        </p>
+        <div className="flex justify-center">
+          <a href="https://freekassa.ru" target="_blank" rel="noopener noreferrer">
+            <Image 
+              src="https://cdn.freekassa.ru/banners/small-white-1.png" 
+              alt="Прием платежей"
+              title="Прием платежей"
+              width={120}
+              height={50}
+            />
+          </a>
+        </div>
+      </section>
+
       {/* Trending Section */}
       <section className="mb-12">
         <div className="flex items-center gap-3 mb-6">
