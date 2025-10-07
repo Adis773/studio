@@ -21,7 +21,6 @@ export default function LandingPage() {
       </div>
        <div className="mt-16 text-xs text-muted-foreground">
         <p>Your journey begins now.</p>
-        <a href="https://freekassa.ru" target="_blank" rel="noopener noreferrer"> <img src="https://cdn.freekassa.ru/banners/small-white-1.png" title="Прием платежей" /></a>
       </div>
     </main>
   );
