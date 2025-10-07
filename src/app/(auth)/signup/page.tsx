@@ -15,7 +15,6 @@ import { createClient } from '@/lib/supabase/client';
 export default function SignUpPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const supabase = createClient();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -24,6 +23,7 @@ export default function SignUpPage() {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    const supabase = createClient();
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -46,6 +46,7 @@ export default function SignUpPage() {
 
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
+    const supabase = createClient();
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
        options: {
