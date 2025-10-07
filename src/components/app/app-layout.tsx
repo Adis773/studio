@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/sidebar";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { Settings, LogOut, MessageSquare, Bot } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -29,6 +28,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { createClient } from "@/lib/supabase/client";
 
 
 function UserMenu({ user }: { user: User }) {
@@ -44,7 +44,14 @@ function UserMenu({ user }: { user: User }) {
   const getInitials = (email: string | null | undefined) => {
     if (!email) return '?';
     const name = user?.user_metadata?.name;
-    return name ? name.charAt(0).toUpperCase() : email.charAt(0).toUpperCase();
+    if (name) {
+        const parts = name.split(' ');
+        if (parts.length > 1) {
+            return parts[0][0] + parts[parts.length - 1][0];
+        }
+        return name.charAt(0).toUpperCase();
+    }
+    return email.charAt(0).toUpperCase();
   };
 
   return (
@@ -103,7 +110,7 @@ function MainSidebar({user}: {user: User}) {
                     <MessageSquare />
                     History
                 </SidebarMenuButton>
-            </MenuItem>
+            </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
