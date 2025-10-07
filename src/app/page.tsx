@@ -5,6 +5,9 @@ import Link from 'next/link';
 export default function LandingPage() {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen text-center p-4 overflow-hidden">
+      <div className="absolute top-8 text-sm text-muted-foreground">
+        сделано Адисом и Эмином
+      </div>
       <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]"></div>
       <div className="absolute top-0 left-0 -z-10 h-full w-full bg-[radial-gradient(circle_500px_at_50%_200px,#3e277733,transparent)]"></div>
 
