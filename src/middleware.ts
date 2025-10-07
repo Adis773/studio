@@ -56,8 +56,6 @@ export async function middleware(request: NextRequest) {
   )
 
   // refresh user session
-  await supabase.auth.getUser()
-
   const { data: { user } } = await supabase.auth.getUser();
 
   // Redirect to login if not authenticated and trying to access /app

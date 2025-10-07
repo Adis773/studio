@@ -3,7 +3,6 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
-import { AuthProvider } from '@/context/auth-context';
 
 const fontInter = Inter({
   subsets: ['latin'],
@@ -28,12 +27,10 @@ export default function RootLayout({
           fontInter.variable
         )}
       >
-        <AuthProvider>
-          <div className="relative flex min-h-dvh flex-col bg-background">
-            {children}
-          </div>
-          <Toaster />
-        </AuthProvider>
+        <div className="relative flex min-h-dvh flex-col bg-background">
+          {children}
+        </div>
+        <Toaster />
       </body>
     </html>
   );
