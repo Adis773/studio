@@ -18,7 +18,7 @@ import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { User } from "@supabase/supabase-js";
-import { Home, Settings, LogOut, MessageSquare, Bot } from "lucide-react";
+import { Settings, LogOut, MessageSquare, Bot } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   DropdownMenu,
@@ -103,7 +103,7 @@ function MainSidebar({user}: {user: User}) {
                     <MessageSquare />
                     History
                 </SidebarMenuButton>
-            </SidebarMenuItem>
+            </MenuItem>
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter>
@@ -116,13 +116,13 @@ function MainSidebar({user}: {user: User}) {
 function Header({user}: {user: User}) {
     const { isMobile } = useSidebar();
     return (
-        <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="container flex h-14 items-center">
+        <header className="sticky top-0 z-10 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+            <div className="container flex h-14 items-center max-w-full px-4">
                  {isMobile && <SidebarTrigger className="mr-4" />}
                 <div className="flex-1">
                     <p className="font-semibold">Cosmos</p>
                 </div>
-                 {!isMobile && <UserMenu user={user} />}
+                 {isMobile ? <UserMenu user={user} /> : null}
             </div>
         </header>
     )
@@ -139,10 +139,12 @@ export function AppLayout({
     <SidebarProvider>
         <MainSidebar user={user}/>
         <SidebarInset>
-            <Header user={user}/>
-            <main className="flex-1 flex flex-col">
-              {children}
-            </main>
+            <div className="flex flex-col h-screen">
+              <Header user={user}/>
+              <main className="flex-1 flex flex-col overflow-hidden">
+                {children}
+              </main>
+            </div>
         </SidebarInset>
     </SidebarProvider>
   );
