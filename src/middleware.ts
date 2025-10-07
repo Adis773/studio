@@ -1,3 +1,4 @@
+
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { type NextRequest, NextResponse } from 'next/server'
 
@@ -54,7 +55,21 @@ export async function middleware(request: NextRequest) {
     }
   )
 
+  // refresh user session
   await supabase.auth.getUser()
+
+  const { data: { user } } = await supabase.auth.getUser();
+
+  // Redirect to login if not authenticated and trying to access /app
+  if (!user && request.nextUrl.pathname.startsWith('/app')) {
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+
+  // Redirect to /app if authenticated and trying to access /login or /signup
+  if (user && (request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/signup')) {
+    return NextResponse.redirect(new URL('/app', request.url));
+  }
+
 
   return response
 }

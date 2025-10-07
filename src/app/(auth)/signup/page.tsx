@@ -39,7 +39,7 @@ export default function SignUpPage() {
         variant: 'destructive',
       });
     } else {
-      toast({ title: 'Success', description: 'Account created! Please check your email to confirm.' });
+      toast({ title: 'Welcome!', description: 'Please check your email to confirm your account.' });
     } 
     setIsLoading(false);
   };
@@ -71,9 +71,9 @@ export default function SignUpPage() {
     <div className="flex items-center justify-center min-h-screen bg-background">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle className="text-2xl">Sign Up</CardTitle>
+          <CardTitle className="text-2xl">Join Cosmos</CardTitle>
           <CardDescription>
-            Enter your information to create an account.
+            Create your account to access the universe.
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSignUp}>
@@ -85,7 +85,7 @@ export default function SignUpPage() {
               onClick={handleGoogleSignIn}
               disabled={isGoogleLoading || isLoading}
             >
-              {isGoogleLoading ? 'Signing up...' : <><Chrome className="mr-2 h-4 w-4" />Sign up with Google</>}
+              {isGoogleLoading ? 'Redirecting...' : <><Chrome className="mr-2 h-4 w-4" />Continue with Google</>}
             </Button>
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
@@ -102,7 +102,7 @@ export default function SignUpPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="m@example.com"
+                placeholder="pioneer@cosmos.ai"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

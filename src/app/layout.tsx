@@ -4,8 +4,6 @@ import './globals.css';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/context/auth-context';
-import { Header } from '@/components/header';
-import { Footer } from '@/components/footer';
 
 const fontInter = Inter({
   subsets: ['latin'],
@@ -13,8 +11,8 @@ const fontInter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'WhisperNet - Share Your Story Anonymously',
-  description: 'A safe place to share your secrets, confessions, and stories without revealing your identity.',
+  title: 'Cosmos - The Universal AI',
+  description: 'The smartest AI in the universe, combining the power of all leading models.',
 };
 
 export default function RootLayout({
@@ -23,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="light">
+    <html lang="en" className="dark">
       <body
         className={cn(
           'min-h-screen bg-background font-sans antialiased',
@@ -32,9 +30,7 @@ export default function RootLayout({
       >
         <AuthProvider>
           <div className="relative flex min-h-dvh flex-col bg-background">
-            <Header />
-            <main className="flex-1">{children}</main>
-            <Footer />
+            {children}
           </div>
           <Toaster />
         </AuthProvider>

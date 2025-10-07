@@ -1,171 +1,27 @@
 
-import Link from 'next/link';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/carousel';
-import { StoryCard } from '@/components/story-card';
-import { getStories, getCategories } from '@/lib/data';
-import type { Category } from '@/lib/types';
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { ChevronDown, TrendingUp } from 'lucide-react';
-import Image from 'next/image';
+import Link from 'next/link';
 
-export default function HomePage({
-  searchParams,
-}: {
-  searchParams?: {
-    category?: Category;
-    sort?: 'newest' | 'popular';
-  };
-}) {
-  const currentCategory = searchParams?.category || 'all';
-  const currentSort = searchParams?.sort || 'newest';
-
-  const trendingStories = getStories({ sort: 'popular', limit: 5 });
-  const stories = getStories({
-    sort: currentSort,
-    category: currentCategory === 'all' ? undefined : currentCategory,
-  });
-  const categories = getCategories();
-
+export default function LandingPage() {
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Premium Section */}
-      <section className="mb-12 text-center">
-        <h2 className="text-3xl font-bold tracking-tight text-foreground mb-4">
-          Премиум доступ
-        </h2>
-        <p className="text-muted-foreground mb-6">
-          Поддержите проект и получите доступ к эксклюзивным возможностям!
-        </p>
-        <div className="flex justify-center">
-          <a href="https://freekassa.ru" target="_blank" rel="noopener noreferrer">
-            <Image 
-              src="https://cdn.freekassa.ru/banners/small-white-1.png" 
-              alt="Прием платежей"
-              title="Прием платежей"
-              width={120}
-              height={50}
-            />
-          </a>
-        </div>
-      </section>
+    <main className="flex flex-col items-center justify-center min-h-screen text-center p-4 overflow-hidden">
+      <div className="absolute inset-0 -z-10 h-full w-full bg-background bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:14px_24px]"></div>
+      <div className="absolute top-0 left-0 -z-10 h-full w-full bg-[radial-gradient(circle_500px_at_50%_200px,#3e277733,transparent)]"></div>
 
-      {/* Trending Section */}
-      <section className="mb-12">
-        <div className="flex items-center gap-3 mb-6">
-          <TrendingUp className="w-8 h-8 text-primary-foreground bg-primary/80 rounded-full p-1.5" />
-          <h2 className="text-3xl font-bold tracking-tight text-foreground">
-            Trending Whispers
-          </h2>
-        </div>
-        <Carousel
-          opts={{
-            align: 'start',
-            loop: true,
-          }}
-          className="w-full"
-        >
-          <CarouselContent>
-            {trendingStories.map((story) => (
-              <CarouselItem
-                key={story.id}
-                className="md:basis-1/2 lg:basis-1/3"
-              >
-                <div className="p-1 h-full">
-                  <StoryCard story={story} isCompact={true} />
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious className="hidden sm:flex" />
-          <CarouselNext className="hidden sm:flex" />
-        </Carousel>
-      </section>
-
-      {/* Main Feed Section */}
-      <section>
-        <div className="flex flex-col sm:flex-row justify-between items-baseline mb-6">
-          <h2 className="text-3xl font-bold tracking-tight text-foreground mb-4 sm:mb-0">
-            Latest Whispers
-          </h2>
-          <div className="flex items-center gap-2">
-            <p className="text-sm text-muted-foreground">Sort by:</p>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="capitalize">
-                  {currentSort} <ChevronDown className="w-4 h-4 ml-2" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem asChild>
-                  <Link href={`?category=${currentCategory}&sort=newest`}>
-                    Newest
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href={`?category=${currentCategory}&sort=popular`}>
-                    Popular
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </div>
-
-        {/* Category Filters */}
-        <div className="flex flex-wrap gap-2 mb-8 border-b pb-4">
-          <Link href={`?sort=${currentSort}`} passHref>
-            <Button
-              variant={currentCategory === 'all' ? 'default' : 'ghost'}
-              className="rounded-full"
-              size="sm"
-            >
-              All
-            </Button>
-          </Link>
-          {categories.map((category) => (
-            <Link
-              key={category.id}
-              href={`?category=${category.id}&sort=${currentSort}`}
-              passHref
-            >
-              <Button
-                variant={currentCategory === category.id ? 'default' : 'ghost'}
-                size="sm"
-                className="rounded-full capitalize"
-              >
-                {category.name}
-              </Button>
-            </Link>
-          ))}
-        </div>
-
-        {/* Stories Grid */}
-        {stories.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {stories.map((story) => (
-              <StoryCard key={story.id} story={story} />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-16 text-muted-foreground">
-            <p className="text-lg">No whispers found in this category.</p>
-            <p>Why not be the first to share one?</p>
-          </div>
-        )}
-      </section>
-    </div>
+      <h1 className="text-5xl md:text-7xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-neutral-50 to-neutral-400 bg-opacity-50 leading-tight md:leading-snug">
+        Meet Cosmos
+      </h1>
+      <p className="mt-4 text-lg md:text-xl max-w-2xl text-muted-foreground">
+        The universal intelligence. Forged from the core of all leading AI, Cosmos delivers answers and creations beyond imagination.
+      </p>
+      <div className="mt-8 flex gap-4">
+        <Button asChild size="lg" className="bg-primary/90 hover:bg-primary text-primary-foreground font-bold shadow-lg shadow-primary/20">
+          <Link href="/app">Enter The Universe</Link>
+        </Button>
+      </div>
+       <div className="mt-16 text-xs text-muted-foreground">
+        <p>Your journey begins now.</p>
+      </div>
+    </main>
   );
 }
