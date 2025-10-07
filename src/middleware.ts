@@ -1,20 +1,26 @@
 
+import { type NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { type NextRequest, NextResponse } from 'next/server'
 
 export async function middleware(request: NextRequest) {
-  const { supabase, response } = await createClient(request)
+  const { supabase, response } = createClient(request)
 
+  // Refresh session if expired - required for Server Components
+  // https://supabase.com/docs/guides/auth/auth-helpers/nextjs#managing-session-with-middleware
   const {
     data: { session },
   } = await supabase.auth.getSession()
 
   if (!session && request.nextUrl.pathname.startsWith('/app')) {
-    return NextResponse.redirect(new URL('/login', request.url))
+    const url = request.nextUrl.clone()
+    url.pathname = '/login'
+    return Response.redirect(url)
   }
 
   if (session && (request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/signup')) {
-    return NextResponse.redirect(new URL('/app', request.url))
+    const url = request.nextUrl.clone()
+    url.pathname = '/app'
+    return Response.redirect(url)
   }
 
   return response
