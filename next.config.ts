@@ -29,12 +29,6 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
-      {
-        protocol: 'https',
-        hostname: 'cdn.freekassa.ru',
-        port: '',
-        pathname: '/**',
-      }
     ],
   },
   allowedDevOrigins: [
