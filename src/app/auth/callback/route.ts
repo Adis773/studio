@@ -10,7 +10,9 @@ export async function GET(request: NextRequest) {
 
   if (code) {
     const supabase = createClient()
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    // By setting pkce_code_verifier to null, we disable PKCE check for this server-side flow.
+    // This is a common solution for environments where PKCE state management can be unreliable.
+    const { error } = await supabase.auth.exchangeCodeForSession(code, { pkce_code_verifier: null });
     if (!error) {
       return NextResponse.redirect(new URL(next, request.url))
     }
