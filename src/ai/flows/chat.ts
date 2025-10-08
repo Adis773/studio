@@ -12,7 +12,7 @@ import {z} from 'genkit';
 export async function chat(message: string): Promise<string> {
   const llm = ai.getLlm('googleai/gemini-1.5-flash');
   const {output} = await llm.generate({
-    prompt: `You are Cosmos, the universal intelligence. Respond to the user's message: ${message}`,
+    prompt: `You are Forest AI, an AI assistant that helps users grow and nurture their ideas. Respond to the user's message: ${message}`,
   });
   return output?.text ?? "I'm sorry, I couldn't process that.";
 }

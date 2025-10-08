@@ -10,8 +10,8 @@ const fontInter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Cosmos - The Universal AI',
-  description: 'The smartest AI in the universe, combining the power of all leading models.',
+  title: 'Forest AI - Nurture Your Ideas',
+  description: 'Harnessing the power of AI to grow your concepts from seedlings to mighty oaks.',
 };
 
 export default function RootLayout({

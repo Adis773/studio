@@ -49,7 +49,7 @@ export default function LoginPage() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${location.origin}/auth/callback`,
+        redirectTo: `https://forest-ai.netlify.app/auth/callback`,
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
@@ -72,7 +72,7 @@ export default function LoginPage() {
         <CardHeader>
           <CardTitle className="text-2xl">Welcome Back</CardTitle>
           <CardDescription>
-            Enter your credentials to access the universe.
+            Log in to your Forest AI account to continue.
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSignIn}>
@@ -101,7 +101,7 @@ export default function LoginPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="pioneer@cosmos.ai"
+                placeholder="user@example.com"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -125,7 +125,7 @@ export default function LoginPage() {
               {isLoading ? 'Signing in...' : 'Sign in'}
             </Button>
             <div className="text-center text-sm">
-              New to Cosmos?{' '}
+              New to Forest AI?{' '}
               <Link href="/signup" className="underline">
                 Sign up
               </Link>

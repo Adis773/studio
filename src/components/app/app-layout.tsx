@@ -68,7 +68,7 @@ function UserMenu({ user }: { user: User }) {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">
-              {user.user_metadata?.name || 'Pioneer'}
+              {user.user_metadata?.name || 'User'}
             </p>
             <p className="text-xs leading-none text-muted-foreground">
               {user.email}
@@ -127,7 +127,7 @@ function Header({user}: {user: User}) {
             <div className="container flex h-14 items-center max-w-full px-4">
                  {isMobile && <SidebarTrigger className="mr-4" />}
                 <div className="flex-1">
-                    <p className="font-semibold">Cosmos</p>
+                    <p className="font-semibold">Forest AI</p>
                 </div>
                  {isMobile ? <UserMenu user={user} /> : null}
             </div>

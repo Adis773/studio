@@ -28,7 +28,7 @@ export default function SignUpPage() {
       email,
       password,
       options: {
-        emailRedirectTo: `${location.origin}/auth/callback`,
+        emailRedirectTo: `https://forest-ai.netlify.app/auth/callback`,
       },
     });
 
@@ -50,7 +50,7 @@ export default function SignUpPage() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
        options: {
-        redirectTo: `${location.origin}/auth/callback`,
+        redirectTo: `https://forest-ai.netlify.app/auth/callback`,
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
@@ -72,9 +72,9 @@ export default function SignUpPage() {
     <div className="flex items-center justify-center min-h-screen bg-background">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle className="text-2xl">Join Cosmos</CardTitle>
+          <CardTitle className="text-2xl">Join Forest AI</CardTitle>
           <CardDescription>
-            Create your account to access the universe.
+            Create your account to let your ideas grow.
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSignUp}>
@@ -103,7 +103,7 @@ export default function SignUpPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="pioneer@cosmos.ai"
+                placeholder="user@example.com"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

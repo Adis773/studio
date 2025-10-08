@@ -5,7 +5,7 @@ import { AppLayout } from "@/components/app/app-layout";
 import { useEffect, useState, useRef } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Send, Sparkles, User as UserIcon } from "lucide-react";
+import { Send, Leaf, User as UserIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
@@ -42,13 +42,13 @@ function ChatMessage({ message, user }: { message: Message, user: User | null })
                     </>
                 ) : (
                     <div className="flex h-full w-full items-center justify-center rounded-full bg-primary/20 text-primary">
-                        <Sparkles className="h-5 w-5" />
+                        <Leaf className="h-5 w-5" />
                     </div>
                 )}
             </Avatar>
             <div className="flex-1 space-y-2 overflow-hidden">
                 <p className="font-medium">
-                    {message.sender === 'user' ? user?.user_metadata?.name || 'You' : 'Cosmos'}
+                    {message.sender === 'user' ? user?.user_metadata?.name || 'You' : 'Forest AI'}
                 </p>
                 <div className="prose prose-stone dark:prose-invert text-foreground">
                    {message.text}
@@ -63,11 +63,11 @@ function ChatSkeleton() {
         <div className="flex items-start gap-4 p-4 bg-muted/30">
             <Avatar className="h-8 w-8">
                 <div className="flex h-full w-full items-center justify-center rounded-full bg-primary/20 text-primary">
-                    <Sparkles className="h-5 w-5" />
+                    <Leaf className="h-5 w-5" />
                 </div>
             </Avatar>
             <div className="flex-1 space-y-2 overflow-hidden">
-                <p className="font-medium">Cosmos</p>
+                <p className="font-medium">Forest AI</p>
                 <div className="space-y-2">
                     <Skeleton className="h-4 w-5/6" />
                     <Skeleton className="h-4 w-3/4" />
@@ -151,11 +151,11 @@ export default function AppPage() {
             {messages.length === 0 ? (
                  <div className="flex-1 flex flex-col items-center justify-center text-center p-4">
                     <div className="mx-auto bg-primary/20 text-primary rounded-full p-4 w-fit">
-                        <Sparkles className="h-10 w-10" />
+                        <Leaf className="h-10 w-10" />
                     </div>
-                    <h1 className="text-3xl font-bold tracking-tighter mt-6">Greetings, Pioneer.</h1>
+                    <h1 className="text-3xl font-bold tracking-tighter mt-6">Welcome to the Forest.</h1>
                     <p className="mt-2 text-muted-foreground max-w-lg">
-                        I am Cosmos, the universal intelligence. What grand designs shall we bring to life today?
+                        I am Forest AI. How can I help your ideas grow today?
                     </p>
                 </div>
             ) : (
@@ -169,7 +169,7 @@ export default function AppPage() {
         <div className="border-t bg-background p-4">
             <form onSubmit={handleSendMessage} className="relative max-w-2xl mx-auto">
                 <Textarea
-                    placeholder="Ask Cosmos anything..."
+                    placeholder="Ask Forest AI anything..."
                     className="pr-16 resize-none"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
